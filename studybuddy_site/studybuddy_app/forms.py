@@ -7,6 +7,7 @@ from django.forms.renderers import TemplatesSetting
 from django.contrib.admin.widgets import AdminDateWidget
 from .widgets import HTML5DateTimeInput
 from studybuddy_app.common.date import date_from_form
+from .models import Rating
 
 # https://docs.djangoproject.com/en/4.2/topics/forms/modelforms/#validation-on-a-modelform
 
@@ -34,4 +35,10 @@ class MeetupForm(forms.ModelForm):
     class Meta:
         model = Meetup
         exclude = ('participants',)
+
+
+class RatingForm(forms.ModelForm):
+    class Meta:
+        model = Rating
+        fields = ['value']
     

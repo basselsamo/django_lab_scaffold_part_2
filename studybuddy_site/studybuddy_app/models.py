@@ -6,6 +6,8 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from .widgets import HTML5DateTimeInput
+from django.contrib.auth.models import User
+
 
 # https://docs.djangoproject.com/en/2.0/ref/models/fields/#django.db.models.Field.from_db_value
    
@@ -46,6 +48,15 @@ class Meetup(models.Model):
     def is_upcoming(self):
         soon = timezone.now() + datetime.timedelta(days=2)
         return self.start_time >= timezone.now() and self.start_time <= soon
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    meetup = models.ForeignKey(Meetup, on_delete=models.CASCADE)
+    value = models.IntegerField(choices=[(i, i) for i in range(1, 11)])
+
+    def __str__(self):
+        return f'{self.user.username} rated {self.meetup.title} as {self.value}'
 
 
 # many_to_many: https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/

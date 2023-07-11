@@ -4,7 +4,7 @@
 
 <h1>Meetup: {{ meetup.title }}</h1>
 <a href="{% url "studybuddy_app:meetup.list" %}">Index</a> |
-<a href="{% url "studybuddy_app:meetup.edit" meetup.id %}">Edit</a> | 
+<a href="{% url "studybuddy_app:meetup.edit" meetup.id %}">Edit</a> |
 <a href="{% url "studybuddy_app:meetup.delete" meetup.id %}">Delete</a>
 <hr/>
 <p>Title: {{ meetup.title }}</p>
@@ -13,7 +13,11 @@
 <p>Duration: {{ meetup.duration }}</p>
 <hr/>
 
-<a href="{% url 'studybuddy_app:meetup.rsvp' meetup.id %}" name="rsvp">Participate</a>
+{% if user in participants %}
+    <a href="{% url 'studybuddy_app:meetup.cancel_rsvp' meetup.id %}" name="cancel_rsvp">Cancel Participation</a>
+{% else %}
+    <a href="{% url 'studybuddy_app:meetup.rsvp' meetup.id %}" name="rsvp">Participate</a>
+{% endif %}
 
 <h2>Participants</h2>
 
@@ -26,6 +30,17 @@
 </p>
 
 {% endfor %}
+
+<h2>Rate this Meetup</h2>
+<form method="post" action="{% url 'studybuddy_app:rating.create' meetup.id %}">
+    {% csrf_token %}
+    <select name="value">
+        {% for i in "123456789 10" %}
+            <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Submit Rating">
+</form>
 
 
 {% endblock content %}

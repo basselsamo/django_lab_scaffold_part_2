@@ -6,7 +6,7 @@ Django Scaffold Site & App for StudyBuddy
 
 <hr/>
 {% if user.is_authenticated %}
-  Hi {{ user.username }}! 
+  Hi @{{ user.username }}!
  | <a href="{% url 'logout' %}">Log Out</a> | 
   <a href="{% url 'login' %}">Log In as other user</a>
 {% else %}

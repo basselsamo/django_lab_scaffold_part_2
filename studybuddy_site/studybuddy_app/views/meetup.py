@@ -10,6 +10,8 @@ from ..models import Meetup
 from studybuddy_app.common.date import date_from_form
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from ..models import Rating
+from ..forms import RatingForm
 
 
 class MeetupListView(LoginRequiredMixin, generic.ListView):
@@ -28,8 +30,16 @@ class MeetupListView(LoginRequiredMixin, generic.ListView):
             context['all_meetups'] = True
         return context
 
+    #def post(self, request, *args, **kwargs):
+        #return _create(request)
     def post(self, request, *args, **kwargs):
-        return _create(request)
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            rating = form.save(commit=False)
+            rating.user = request.user
+            rating.meetup = self.get_object()
+            rating.save()
+        return super().get(request, *args, **kwargs)
 
 
 class MeetupDetailView(LoginRequiredMixin, generic.DetailView):
@@ -112,6 +122,15 @@ def rsvp(request, pk):
     if request.user.is_authenticated:
         meetup = Meetup.objects.get(pk=pk)
         meetup.participants.add(request.user)
+    return HttpResponseRedirect(
+        reverse("studybuddy_app:meetup.detail",
+                args=[meetup.id]))
+
+@login_required
+def cancel_rsvp(request, pk):
+    if request.user.is_authenticated:
+        meetup = Meetup.objects.get(pk=pk)
+        meetup.participants.remove(request.user)
     return HttpResponseRedirect(
         reverse("studybuddy_app:meetup.detail",
                 args=[meetup.id]))
