@@ -10,6 +10,7 @@
     cd django_lab_studybuddy
     cd studybuddy_site
 
+
 ### Create a venv and install dependencies
 
 You do not need to use a virtual environment - see [venv](https://docs.python.org/3/library/venv.html) - but you need to install the requirements and know in wich environment they are.
