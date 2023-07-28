@@ -7,7 +7,7 @@ from .views import rating as rating_views
 app_name = "studybuddy_app"
 
 urlpatterns = [
-
+    path("resource/<int:pk>/edit", meetup_views.edit_resource, name="meetup.edit_resource"),
     path("meetups/<int:pk>/rsvp/", meetup_views.rsvp, name="meetup.rsvp"),
 
     path("meetups/<int:pk>/", MeetupDetailView.as_view(), name="meetup.detail"),

@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from ..models import Rating
 from ..forms import RatingForm
+from ..forms import MeetupEditForm
 
 
 class MeetupListView(LoginRequiredMixin, generic.ListView):
@@ -55,7 +56,11 @@ class MeetupDetailView(LoginRequiredMixin, generic.DetailView):
 
     def post(self, request, *args, **kwargs):
         meetup = self.get_object()
-        return _update(request, meetup)
+        location = request.POST['location']
+        meetup.location = location
+        meetup.save()
+        return HttpResponseRedirect(
+            reverse("studybuddy_app:meetup.detail", args=[meetup.id]))
 
 
 @login_required
@@ -67,8 +72,22 @@ def new(request):
 @login_required
 def edit(request, pk):
     meetup = get_object_or_404(Meetup, pk=pk)
-    meetup_form = MeetupForm(instance=meetup)
-    return _render_meetup_form(request, form=meetup_form, pk=pk)
+
+    if request.method == 'POST':
+        form = MeetupEditForm(request.POST, instance=meetup)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('studybuddy_app:meetup.detail', args=[pk]))
+    else:
+        form = MeetupEditForm(instance=meetup)
+
+    context = {
+        "meetup_form": form,
+        "http_method": 'POST',
+        "action_url": reverse('studybuddy_app:meetup.edit', args=[pk]),
+        "button_text": 'Save'
+    }
+    return render(request, "studybuddy_app/meetup_form.html", context)
 
 
 def _render_meetup_form(request, form, pk=None, title='Edit', button='Save'):
@@ -134,3 +153,26 @@ def cancel_rsvp(request, pk):
     return HttpResponseRedirect(
         reverse("studybuddy_app:meetup.detail",
                 args=[meetup.id]))
+
+@login_required
+def edit_resource(request, pk):
+    meetup = get_object_or_404(Meetup, pk=pk)
+    meetup_form = MeetupForm(instance=meetup)
+    return _render_meetup_form(request, form=meetup_form, pk=pk)
+
+
+@login_required
+def _render_meetup_form(request, form, pk=None, title='Edit', button='Save'):
+    if pk is None:
+        action_url = reverse('studybuddy_app:meetup.list')
+    else:
+        action_url = reverse(
+            'studybuddy_app:meetup.detail',
+            args=[pk])
+
+    context = {"http_method": 'POST',
+               "meetup_form": form,
+               "action_url": action_url,
+               "title_text": title,
+               "button_text": button}
+    return render(request, "studybuddy_app/meetup_form.html", context)

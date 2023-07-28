@@ -41,4 +41,14 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ['value']
+
+
+class MeetupEditForm(forms.ModelForm):
+    # Add additional field for editing
+    additional_field = forms.CharField(label="Additional Field", max_length=100)
+
+    class Meta:
+        model = Meetup
+        fields = ['title', 'location', 'start_time', 'duration']
     
+

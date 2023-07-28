@@ -1,6 +1,6 @@
 # This is a Django Scaffold App for Lab Exercises in [Info3](https://home.htw-berlin.de/~kleinen/info3/labs)
 
-[Lab 10 SoSe 23](https://home.htw-berlin.de/~kleinen/classes/ss2023/info3/labs/lab-10-webapps-1/)
+[Lab 11 SoSe 23](https://home.htw-berlin.de/~kleinen/classes/ss2023/info3/labs/lab-11-webapps-2/)
 
 ## Instructions
 
